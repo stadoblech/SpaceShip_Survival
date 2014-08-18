@@ -168,5 +168,15 @@ class PlayState extends FlxState
 			}
 		}
 		
+		if (player.y < -35)
+		{
+			player.alive = false;
+		}
+		
+		if (player.y > 480)
+		{
+			player.alive = false;
+		}
+		
 	}
 }

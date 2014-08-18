@@ -32,16 +32,19 @@ class Player extends FlxSprite
 		acceleration.y = gravity;
 		centerOffsets();
 		createGibs();
+		antialiasing = true;
 	}
 	
 	override public function update():Void 
 	{
 		jump();	
 		
+		/*
 		if (FlxG.keys.anyPressed(["C"]))
 		{
 			killShip();
 		}
+		*/
 		
 		if (!alive)
 		{
