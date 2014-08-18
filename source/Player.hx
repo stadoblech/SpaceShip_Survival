@@ -40,7 +40,7 @@ class Player extends FlxSprite
 		
 		if (FlxG.keys.anyPressed(["C"]))
 		{
-			killPlayer();
+			killShip();
 		}
 		
 		if (!alive)
@@ -67,6 +67,8 @@ class Player extends FlxSprite
 	override public function kill():Void 
 	{
 		solid = false;
+		visible = false;
+		
 		super.kill();
 	}
 	
@@ -77,6 +79,8 @@ class Player extends FlxSprite
 			gibs.at(this);
 			gibs.start(true, 5, 0,10);
 			kill();
+			x = -300;
+			
 		}
 	}
 
@@ -94,11 +98,6 @@ class Player extends FlxSprite
 		//gibs.makeParticles();
 	}
 	
-	public function killPlayer():Void
-	{
-		alive = false;
-	}
-			
 	public function isAlive():String
 	{
 		return "" + alive;

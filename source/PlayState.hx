@@ -1,5 +1,6 @@
 package;
 
+import flixel.addons.effects.FlxWaveSprite.WaveMode;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
@@ -54,7 +55,7 @@ class PlayState extends FlxState
 		add(new FlxText(200, 10, 100, "" + player.getYVelocity()));
 		
 		add(velocityYtext);
-		FlxG.sound.play("assets/music/nebula.wav");
+		//FlxG.sound.play("assets/music/nebula.wav");
 		super.create();
 
 	}
@@ -84,8 +85,10 @@ class PlayState extends FlxState
 		spawnTime -= FlxG.elapsed;
 		if (spawnTime < 0)
 		{
-			spawnTime = FlxRandom.floatRanged(0.1,1);
-			trashGroup.add(new Trash());
+			spawnTime = FlxRandom.floatRanged(0.1, 1);
+			var trash = new Trash();
+			add(trash.getGibs());
+			trashGroup.add(trash);
 		}
 	}
 	
@@ -95,8 +98,37 @@ class PlayState extends FlxState
 		{
 			if (FlxCollision.pixelPerfectCheck(player, t))
 			{
-				player.killPlayer();
+				player.alive = false;
+				t.alive = false;
+			}
+			
+			for (t2 in trashGroup)
+			{
+				if (FlxG.collide(t, t2))
+				{
+					/*
+					t.collided = true;
+					t.visible = false;
+					t2.visible = false;
+					t.solid = false;
+					t2.solid = false;
+					trashGroup.remove(t, true);
+					trashGroup.remove(t2,true);
+					*/
+					t.alive = false;
+					t2.alive = false;
+				}
 			}
 		}
+		
+		
+		for (t in trashGroup)
+		{
+			if (t.x < -50)
+			{
+				trashGroup.remove(t);
+			}
+		}
+		
 	}
 }
