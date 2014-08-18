@@ -1,7 +1,9 @@
 package;
 
 import flixel.addons.effects.FlxWaveSprite.WaveMode;
+import flixel.addons.plugin.FlxScrollingText;
 import flixel.FlxG;
+//import flixel.FlxGTest;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.system.FlxSound;
@@ -25,9 +27,8 @@ class PlayState extends FlxState
 	var stars:FlxStarField2D;
 	var player:Player;
 	
-
-	var velocityYtext:FlxText;
-	var testTextCoords:Float;
+	var againText:FlxText;
+	var testText:FlxText;
 	
 	var trashGroup:FlxTypedGroup<Trash>;
 	
@@ -49,13 +50,20 @@ class PlayState extends FlxState
 		add(player.getGibs());
 		
 		trashGroup = new FlxTypedGroup<Trash>();
+		trashGroup.set_maxSize(25);
 		add(trashGroup);
 		
-		velocityYtext = new FlxText(10,10,100);
-		add(new FlxText(200, 10, 100, "" + player.getYVelocity()));
+		againText = new FlxText(200,200,0,"",20,false);
+		againText.visible = false;
+		againText.text = "Press SPACE for restart";
+		//add(new FlxText(200, 10, 100, "" + player.getYVelocity()));
+		add(againText);
 		
-		add(velocityYtext);
-		FlxG.sound.play("assets/music/nebula.wav");
+		testText = new FlxText(0, 0, 0, "", 8);
+		add(testText);
+
+		FlxG.sound.play("assets/music/nebula.wav",1,true);
+
 		super.create();
 
 	}
@@ -74,22 +82,47 @@ class PlayState extends FlxState
 	 */
 	override public function update():Void
 	{
+		if (player.alive)
+		{
+			againText.visible = false;
+			checkColision();
+		} else
+		{
+			againText.visible = true;
+			if (FlxG.keys.anyPressed(["SPACE"]))
+			{
+				restartGame();
+				againText.visible = false;
+				player.alive = true;
+				player.visible = true;
+				player.revive();
+			}
+		}
+		
 		spawnEnemy();
-		velocityYtext.text = "" + player.isAlive();
-		checkColision();
+		testText.text = "" + trashGroup.length;
 		super.update();
 	}
 	
 	public function spawnEnemy():Void
 	{
+
 		spawnTime -= FlxG.elapsed;
 		if (spawnTime < 0)
 		{
-			spawnTime = FlxRandom.floatRanged(0.1, 1);
+			spawnTime = FlxRandom.floatRanged(0.1,0.5);
 			var trash = new Trash();
 			add(trash.getGibs());
 			trashGroup.add(trash);
 		}
+
+	}
+	
+	private function restartGame():Void
+	{
+		//trashGroup.clear();
+		player.x = 100;
+		player.y = 100;
 	}
 	
 	public function checkColision():Void
@@ -106,15 +139,6 @@ class PlayState extends FlxState
 			{
 				if (FlxG.collide(t, t2))
 				{
-					/*
-					t.collided = true;
-					t.visible = false;
-					t2.visible = false;
-					t.solid = false;
-					t2.solid = false;
-					trashGroup.remove(t, true);
-					trashGroup.remove(t2,true);
-					*/
 					t.alive = false;
 					t2.alive = false;
 				}

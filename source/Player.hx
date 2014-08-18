@@ -98,11 +98,6 @@ class Player extends FlxSprite
 		//gibs.makeParticles();
 	}
 	
-	public function isAlive():String
-	{
-		return "" + alive;
-	}
-	
 	private inline function jump():Void
 	{
 		if (FlxG.keys.anyPressed(["SPACE"])&& !isJump)
