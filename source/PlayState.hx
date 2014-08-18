@@ -30,18 +30,22 @@ class PlayState extends FlxState
 	var againText:FlxText;
 	var testText:FlxText;
 	
+	var scoreText:FlxText;
+	
 	var trashGroup:FlxTypedGroup<Trash>;
 	
 	var spawnTime:Float = 1;
 	
 	var musicTheme:FlxSound;
+	
+	var score:Int;
 
 	/**
 	 * Function that is called up when to state is created to set it up. 
 	 */
 	override public function create():Void
 	{
-		
+		score = 0;
 		stars = new FlxStarField2D();
 		add(stars);
 		
@@ -53,11 +57,15 @@ class PlayState extends FlxState
 		trashGroup.set_maxSize(25);
 		add(trashGroup);
 		
-		againText = new FlxText(200,200,0,"",20,false);
+		againText = new FlxText(200,200,0,"",20);
 		againText.visible = false;
 		againText.text = "Press SPACE for restart";
 		//add(new FlxText(200, 10, 100, "" + player.getYVelocity()));
 		add(againText);
+		
+		scoreText = new FlxText(200, 100, 0, "", 20);
+		scoreText.visible = false;
+		add(scoreText);
 		
 		testText = new FlxText(0, 0, 0, "", 8);
 		add(testText);
@@ -89,13 +97,18 @@ class PlayState extends FlxState
 		} else
 		{
 			againText.visible = true;
+			scoreText.visible = true;
+			scoreText.text = "Your score is : " +score;
+			
 			if (FlxG.keys.anyPressed(["SPACE"]))
 			{
 				restartGame();
 				againText.visible = false;
+				scoreText.visible = false;
 				player.alive = true;
 				player.visible = true;
 				player.revive();
+				score = 0;
 			}
 		}
 		
@@ -151,6 +164,7 @@ class PlayState extends FlxState
 			if (t.x < -50)
 			{
 				trashGroup.remove(t);
+				score++;
 			}
 		}
 		
