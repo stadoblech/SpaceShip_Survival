@@ -55,7 +55,7 @@ class PlayState extends FlxState
 		add(new FlxText(200, 10, 100, "" + player.getYVelocity()));
 		
 		add(velocityYtext);
-		//FlxG.sound.play("assets/music/nebula.wav");
+		FlxG.sound.play("assets/music/nebula.wav");
 		super.create();
 
 	}
