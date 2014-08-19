@@ -19,7 +19,7 @@ class Player extends FlxSprite
 	var jumpVelocity: Float = -150;
 	var jumpTime:Float;
 	var maxAngle:Float = 50;
-	var minAngle:Float = -45;
+	var minAngle:Float = -50;
 	
 	var gibs:FlxEmitterExt;
 		
@@ -103,7 +103,7 @@ class Player extends FlxSprite
 	
 	private inline function jump():Void
 	{
-		if (FlxG.keys.anyPressed(["SPACE"])&& !isJump)
+		if (FlxG.keys.anyPressed(["SPACE"]))
 		{
 			isJump = true;
 			velocity.y = jumpVelocity;

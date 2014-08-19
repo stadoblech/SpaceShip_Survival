@@ -54,7 +54,7 @@ class PlayState extends FlxState
 		add(player.getGibs());
 		
 		trashGroup = new FlxTypedGroup<Trash>();
-		trashGroup.set_maxSize(25);
+		trashGroup.set_maxSize(20);
 		add(trashGroup);
 		
 		againText = new FlxText(200,200,0,"",20);
