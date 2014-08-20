@@ -3,7 +3,6 @@ package;
 import flixel.addons.effects.FlxWaveSprite.WaveMode;
 import flixel.addons.plugin.FlxScrollingText;
 import flixel.FlxG;
-//import flixel.FlxGTest;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.system.FlxSound;
@@ -18,6 +17,7 @@ import flixel.util.FlxRandom;
 
 import openfl.Assets;
 
+import flixel.addons.api.FlxGameJolt;
 /**
  * A FlxState which can be used for the actual gameplay.
  */
@@ -29,8 +29,9 @@ class PlayState extends FlxState
 	
 	var againText:FlxText;
 	var testText:FlxText;
-	
 	var scoreText:FlxText;
+	//var screenScoreText:FlxText;
+	//var highScoreText:FlxText;
 	
 	var trashGroup:FlxTypedGroup<Trash>;
 	
@@ -39,6 +40,10 @@ class PlayState extends FlxState
 	var musicTheme:FlxSound;
 	
 	var score:Int;
+	
+	var highScore:Int;
+	
+	var numberOfDeaths:Int;
 
 	/**
 	 * Function that is called up when to state is created to set it up. 
@@ -46,6 +51,7 @@ class PlayState extends FlxState
 	override public function create():Void
 	{
 		score = 0;
+		highScore = 0;
 		stars = new FlxStarField2D();
 		add(stars);
 		
@@ -54,9 +60,20 @@ class PlayState extends FlxState
 		add(player.getGibs());
 		
 		trashGroup = new FlxTypedGroup<Trash>();
-		trashGroup.set_maxSize(20);
+		trashGroup.set_maxSize(17);
 		add(trashGroup);
 		
+		initTexts();
+		FlxG.sound.play("assets/music/nebula.wav", 1, true);
+	
+		gamejoltTrophiesInit();
+		super.create();
+
+	}
+	
+	
+	private function initTexts():Void
+	{
 		againText = new FlxText(200,200,0,"",20);
 		againText.visible = false;
 		againText.text = "Press SPACE for restart";
@@ -67,15 +84,11 @@ class PlayState extends FlxState
 		scoreText.visible = false;
 		add(scoreText);
 		
+		
+		
 		testText = new FlxText(0, 0, 0, "", 8);
 		add(testText);
-
-		FlxG.sound.play("assets/music/nebula.wav",1,true);
-
-		super.create();
-
 	}
-	
 	/**
 	 * Function that is called when this state is destroyed - you might want to 
 	 * consider setting all objects this state uses to null to help garbage collection.
@@ -84,7 +97,15 @@ class PlayState extends FlxState
 	{
 		super.destroy();
 	}
-
+	
+	
+	private function checkHighScore():Void
+	{
+		if (score > highScore)
+		{
+			highScore = score;
+		}
+	}
 	/**
 	 * Function that is called once every frame.
 	 */
@@ -94,14 +115,18 @@ class PlayState extends FlxState
 		{
 			againText.visible = false;
 			checkColision();
+			checkforGamejoltTrophies();
 		} else
 		{
+			checkHighScore();
 			againText.visible = true;
 			scoreText.visible = true;
-			scoreText.text = "Your score is : " +score;
+			scoreText.text = "Your score is : " +score+"\nHigh score :" + highScore;
+			numberOfDeaths++;
 			
 			if (FlxG.keys.anyPressed(["SPACE"]))
 			{
+				FlxGameJolt.addTrophy(10549);
 				restartGame();
 				againText.visible = false;
 				scoreText.visible = false;
@@ -112,11 +137,52 @@ class PlayState extends FlxState
 			}
 		}
 		
+		
+		
 		spawnEnemy();
-		testText.text = "" + trashGroup.length;
+		
 		super.update();
+		
 	}
 	
+	private function gamejoltTrophiesInit() : Void
+	{
+		FlxGameJolt.init(32383, "44951526d06717ae57e88607b56be2b7",true);
+	}
+	
+	private function checkforGamejoltTrophies() : Void
+	{
+		if (score > 100)
+		{
+			FlxGameJolt.openSession();
+			FlxGameJolt.addTrophy(10544);
+			FlxGameJolt.closeSession();
+		}
+		
+		if (score > 200)
+		{
+			FlxGameJolt.addTrophy(10545);
+		}
+		
+		if (score > 300)
+		{
+			FlxGameJolt.addTrophy(10546);
+		}
+		
+		if (score > 500)
+		{
+			FlxGameJolt.addTrophy(10457);
+		}
+		
+		if (numberOfDeaths > 20)
+		{
+			FlxGameJolt.addTrophy(10548);
+		}
+		
+		testText.text = "" + score;
+		
+		
+	}
 	public function spawnEnemy():Void
 	{
 
@@ -154,6 +220,7 @@ class PlayState extends FlxState
 				{
 					t.alive = false;
 					t2.alive = false;
+					score = score + 3;
 				}
 			}
 		}
