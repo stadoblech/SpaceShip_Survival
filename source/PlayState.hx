@@ -14,6 +14,7 @@ import flixel.group.FlxTypedGroup;
 import flixel.util.FlxTimer;
 import flixel.util.FlxCollision;
 import flixel.util.FlxRandom;
+import haxe.Log;
 
 import openfl.Assets;
 
@@ -44,6 +45,8 @@ class PlayState extends FlxState
 	var highScore:Int;
 	
 	var numberOfDeaths:Int;
+	
+	var trophyId:Int;
 
 	/**
 	 * Function that is called up when to state is created to set it up. 
@@ -95,6 +98,9 @@ class PlayState extends FlxState
 	 */
 	override public function destroy():Void
 	{
+		trashGroup = null;
+		player = null;
+		stars = null;
 		super.destroy();
 	}
 	
@@ -104,6 +110,7 @@ class PlayState extends FlxState
 		if (score > highScore)
 		{
 			highScore = score;
+			FlxGameJolt.addScore("Score : " + highScore,highScore);
 		}
 	}
 	/**
@@ -119,14 +126,28 @@ class PlayState extends FlxState
 		} else
 		{
 			checkHighScore();
+			
 			againText.visible = true;
 			scoreText.visible = true;
 			scoreText.text = "Your score is : " +score+"\nHigh score :" + highScore;
 			numberOfDeaths++;
 			
+			for (t in trashGroup)
+			{
+				t.alive = false;
+			}
+			
 			if (FlxG.keys.anyPressed(["SPACE"]))
 			{
-				FlxGameJolt.addTrophy(10549);
+				/*
+				#if flash8
+				Sys.print("test");
+				#end
+				*/
+				var trophyId:Int = 10549;
+				FlxGameJolt.addTrophy(trophyId);
+				//Log.trace(trophyId);
+				//FlxG.log.add(trophyId);
 				restartGame();
 				againText.visible = false;
 				scoreText.visible = false;
@@ -152,34 +173,37 @@ class PlayState extends FlxState
 	
 	private function checkforGamejoltTrophies() : Void
 	{
-		if (score > 100)
+ 		if (score > 100)
 		{
-			FlxGameJolt.openSession();
-			FlxGameJolt.addTrophy(10544);
-			FlxGameJolt.closeSession();
+			trophyId = 10550;
+			FlxGameJolt.addTrophy(trophyId);
 		}
 		
 		if (score > 200)
 		{
-			FlxGameJolt.addTrophy(10545);
+			trophyId = 10545;
+			FlxGameJolt.addTrophy(trophyId);
 		}
 		
 		if (score > 300)
 		{
-			FlxGameJolt.addTrophy(10546);
+			trophyId = 10546;
+			FlxGameJolt.addTrophy(trophyId);
 		}
 		
 		if (score > 500)
 		{
-			FlxGameJolt.addTrophy(10457);
+			trophyId = 10457;
+			FlxGameJolt.addTrophy(trophyId);
 		}
 		
 		if (numberOfDeaths > 20)
 		{
-			FlxGameJolt.addTrophy(10548);
+			trophyId = 10548;
+			FlxGameJolt.addTrophy(trophyId);
 		}
 		
-		testText.text = "" + score;
+		//testText.text = "" + score;
 		
 		
 	}
